@@ -1,7 +1,7 @@
 {
   "name": "electron-clear-data",
   "version": "1.0.0",
-  "description": "Clears user and app data for your electron application",
+  "description": "Clears user data for your electron application",
   "keywords": [
     "electron",
     "clear",
