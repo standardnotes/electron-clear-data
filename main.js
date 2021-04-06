@@ -1,5 +1,5 @@
 import { app } from 'electron';
-import fs from 'fs-extra';
+import { emptyDirSync } from 'fs-extra';
 
 /**
  * Clears all user data.
@@ -7,7 +7,7 @@ import fs from 'fs-extra';
  */
 export function clearUserData () {
     const userDataPath = app.getPath('userData');
-    fs.removeSync(userDataPath);
+    emptyDirSync(userDataPath);
     app.relaunch();
     app.exit();
 };
