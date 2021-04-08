@@ -1,7 +1,16 @@
 {
   "name": "electron-clear-data",
   "version": "1.0.3",
-  "description": "Clears user data for your electron application",
+  "description": "Clears user data for your electron application.",
+  "homepage": "https://github.com/standardnotes/electron-clear-data#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/standardnotes/electron-clear-data.git"
+  },
+  "bugs": {
+    "url": "https://github.com/standardnotes/electron-clear-data/issues",
+    "email": "security@standardnotes.org"
+  },
   "keywords": [
     "electron",
     "clear",
