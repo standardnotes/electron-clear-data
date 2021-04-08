@@ -7,7 +7,10 @@ import { clearUserData } from './main';
 const electronPath = path.resolve(__dirname, '../node_modules/.bin/electron');
 const testAppPath = path.resolve(__dirname, '../test/electron-app');
 
-// app.exit() and app.relaunch() are mocked here because relaunching the application would disconnect the test session.
+/**
+ * app.exit() and app.relaunch() are mocked here because 
+ * relaunching the application would disconnect the test session.
+ */
 app.exit = jest.fn().mockImplementation(() => '');
 app.relaunch = jest.fn().mockImplementation(() => {
   if (testApplication && !testApplication.isRunning()) {
