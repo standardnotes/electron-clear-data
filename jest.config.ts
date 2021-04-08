@@ -12,6 +12,9 @@ export default {
   ],
   preset: "ts-jest",
   runner: "@jest-runner/electron/main",
+  setupFiles: [
+    "<rootDir>/test/setupEnv.ts"
+  ],
   testEnvironment: "node",
   testMatch: [
     "**/?(*.)(spec|test).ts"
