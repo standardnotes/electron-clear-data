@@ -41,6 +41,8 @@ function createTmpDir() {
 let testApplication: Application;
 
 describe('electron-clear-data', () => {
+  jest.setTimeout(15000);
+
   const userDataDir = getUserDataPath();
 
   beforeEach(() => {
@@ -85,7 +87,7 @@ describe('electron-clear-data', () => {
       expect(app.relaunch).toBeCalledTimes(1);
     });
 
-    it('should create new files', async () => {
+    it('should create new files after relaunch', async () => {
       let dirContents = getDirContents(userDataDir);
       expect(dirContents.length).toBeGreaterThan(0);
 
@@ -95,7 +97,7 @@ describe('electron-clear-data', () => {
       expect(dirContents.length).toBe(0);
 
       // Waiting a bit so Electron has a chance to create the user data directory.
-      await sleep(5);
+      await sleep(15);
 
       dirContents = getDirContents(userDataDir);
       expect(dirContents.length).toBeGreaterThan(0);
