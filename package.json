@@ -8,7 +8,8 @@
     "userdata",
     "delete",
     "wipe",
-    "application"
+    "application",
+    "leveldb"
   ],
   "license": "MIT",
   "author": "Johnny Almonte <johnny@standardnotes.org>",
