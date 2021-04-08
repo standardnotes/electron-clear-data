@@ -18,6 +18,20 @@ Local Storage/
     └── MANIFEST-000001
 ```
 
+Our main interests here are the [Log files](###log-files) and [Sorted tables](###sorted-tables). These files are not deleted when the Local Storage is cleared because `electron` reuses the same database even as clients instruct to create new ones. This may expose private information from previous sessions, which is a security hazard.
+
+In addition, even deleting records from IndexedDB does not remove those records from the log file. Please see [this open issue](https://github.com/google/leveldb/issues/783) on the leveldb repo for more.
+
+The only sure-fire way to clear sensitive data that was once written to Local Storage or IndexedDB is to delete the underlying files manually, and restart the application so that these files are recreated, which is precisely what this package does.
+
+The core code involved in this package is not difficult to write yourself. However, it can be difficult to do safely, and to ascertain the correctness of your code. For this reason we've created this package to be as safe and reliable as possible. We've composed tests that ensure this functionality always works as you would expect and does not regress. The code is written in TypeScript to maximize compile-time safety. We'll also keep this package up to date with other Electron data-related vulnerabilities as and when they are discovered.
+
+---
+
+## leveldb files
+
+Each database is represented by a set of files stored in a directory. There are several different types of files as documented below:
+
 ### Log files
 
 > A log file (*.log) stores a sequence of recent updates. Each update is appended to the current log file. When the log file reaches a pre-determined size (approximately 4MB by default), it is converted to a sorted table and a new log file is created for future updates.
@@ -39,14 +53,6 @@ Local Storage/
 > Informational messages are printed to files named LOG and LOG.old.
 
 See [leveldb implementation](https://github.com/google/leveldb/blob/master/doc/impl.md) for a more detailed implementation document.
-
----
-
-Our main interests here are the [Log files](###log-files) and [Sorted tables](###sorted-tables). These files are not deleted when the Local Storage is cleared because `electron` is using the same database over and over again. This may expose information from previous sessions, which is not ideal.
-
-Additionally, if you uninstall the electron application from your system, this information is not deleted either.
-
-If you want to clear or delete this information when creating a new session or uninstalling the application, just delete the user data directory and relaunch the application, which is basically what this package does :smile:
 
 ## Installation
 
