@@ -4,7 +4,7 @@ import fs from 'fs';
 import path from 'path';
 import {
   clearUserDataDirectory,
-  clearLevelDbDirectories
+  clearSensitiveDirectories
 } from './main';
 
 const electronPath = path.resolve(__dirname, '../node_modules/.bin/electron');
@@ -104,9 +104,9 @@ describe('electron-clear-data', () => {
     });
   });
 
-  describe('clearLevelDbDirectories', () => {
+  describe('clearSensitiveDirectories', () => {
     it('should clear leveldb directories', async () => {
-      clearLevelDbDirectories();
+      clearSensitiveDirectories();
 
       const leveldbDirectories = [
         'Local Storage',
@@ -122,7 +122,7 @@ describe('electron-clear-data', () => {
     });
 
     it('should relaunch application', () => {
-      clearLevelDbDirectories();
+      clearSensitiveDirectories();
 
       expect(app.exit).toBeCalledTimes(1);
       expect(app.relaunch).toBeCalledTimes(1);

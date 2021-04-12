@@ -85,11 +85,11 @@ clearUserDataDirectory();
 * To delete sensitive LevelDB related files only (from the user data directory):
 
 ```javascript
-import { clearLevelDbDirectories } from 'electron-clear-data';
+import { clearSensitiveDirectories } from 'electron-clear-data';
 
 ...
 
-clearLevelDbDirectories();
+clearSensitiveDirectories();
 ```
 
 ## Contributing
