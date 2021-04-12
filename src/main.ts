@@ -1,17 +1,45 @@
 import { app } from 'electron';
 import { emptyDirSync } from 'fs-extra';
+import path from 'path';
 
-/**
- * Clears all user data.
- * The user data directory is recreated after re-launching the application.
- */
-function clearUserData(): void {
-  const userDataPath = app.getPath('userData');
-  emptyDirSync(userDataPath);
+const relaunchApp = () => {
   app.relaunch();
   app.exit();
 };
 
+/**
+ * Removes the contents of the user data directory.
+ * This directory is then recreated after re-launching the application.
+ */
+function clearUserDataDirectory(): void {
+  const userDataPath = app.getPath('userData');
+  emptyDirSync(userDataPath);
+  relaunchApp();
+};
+
+/**
+ * Removes directories containing leveldb databases.
+ * Each directory is reinitialized after re-launching the application.
+ */
+function clearLevelDbDirectories(): void {
+  const userDataPath = app.getPath('userData');
+  /**
+   * A list of directories that contain leveldb databases.
+   * All data is wiped along the *.log and *.ldb files.
+   */
+  const directoriesToRemove = [
+    'Local Storage',
+    'IndexedDB',
+    'Session Storage'
+  ];
+  directoriesToRemove.forEach((item) => {
+    const removeDirectory = path.join(userDataPath, item);
+    emptyDirSync(removeDirectory);
+  });
+  relaunchApp();
+};
+
 export {
-  clearUserData
+  clearUserDataDirectory,
+  clearLevelDbDirectories
 };
