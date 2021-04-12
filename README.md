@@ -70,6 +70,16 @@ npm install electron-clear-data
 
 ## Usage
 
+* To delete sensitive [LevelDB related files](##leveldb-files) only (from the user data directory):
+
+```javascript
+import { clearSensitiveDirectories } from 'electron-clear-data';
+
+...
+
+clearSensitiveDirectories();
+```
+
 * To delete the entire user data directory:
 
 ```javascript
@@ -78,18 +88,6 @@ import { clearUserDataDirectory } from 'electron-clear-data';
 ...
 
 clearUserDataDirectory();
-```
-
----
-
-* To delete sensitive LevelDB related files only (from the user data directory):
-
-```javascript
-import { clearSensitiveDirectories } from 'electron-clear-data';
-
-...
-
-clearSensitiveDirectories();
 ```
 
 ## Contributing
