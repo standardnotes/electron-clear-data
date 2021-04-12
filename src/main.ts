@@ -21,7 +21,7 @@ export function clearUserDataDirectory(): void {
  * Removes directories containing leveldb databases.
  * Each directory is reinitialized after re-launching the application.
  */
-function clearLevelDbDirectories(): void {
+export function clearLevelDbDirectories(): void {
   const userDataPath = app.getPath('userData');
   /**
    * A list of directories that contain leveldb databases.
