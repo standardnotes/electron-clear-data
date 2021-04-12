@@ -45,7 +45,7 @@
     "typescript": "^4.2.4"
   },
   "peerDependencies": {
-    "electron": "^9.4.0"
+    "electron": ">= 1.2.2"
   },
   "files": [
     "dist"
