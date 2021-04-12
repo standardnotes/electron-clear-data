@@ -11,7 +11,7 @@ const relaunchApp = () => {
  * Removes the contents of the user data directory.
  * This directory is then recreated after re-launching the application.
  */
-function clearUserDataDirectory(): void {
+export function clearUserDataDirectory(): void {
   const userDataPath = app.getPath('userData');
   emptyDirSync(userDataPath);
   relaunchApp();
