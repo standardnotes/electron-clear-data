@@ -30,7 +30,7 @@ The core code involved in this package is not difficult to write yourself. Howev
 
 ## leveldb files
 
-Each database is represented by a set of files stored in a directory. There are several different types of files as documented below:
+Each database is represented by a set of files stored in a directory. There are several different types of files as documented below (all of which will be deleted by `electron-clear-data`):
 
 ### Log files
 
@@ -82,7 +82,7 @@ clearUserDataDirectory();
 
 ---
 
-* To delete `leveldb` files only, from the user data directory:
+* To delete [leveldb](##leveldb-files) files only, from the user data directory:
 
 ```javascript
 import { clearLevelDbDirectories } from 'electron-clear-data';
