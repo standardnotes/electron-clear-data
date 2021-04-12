@@ -1,8 +1,11 @@
 import { Application } from 'spectron';
-import electron, { app } from 'electron';
+import { app } from 'electron';
 import fs from 'fs';
 import path from 'path';
-import { clearUserData } from './main';
+import {
+  clearUserDataDirectory,
+  clearLevelDbDirectories
+} from './main';
 
 const electronPath = path.resolve(__dirname, '../node_modules/.bin/electron');
 const testAppPath = path.resolve(__dirname, '../test/electron-app');
@@ -17,12 +20,6 @@ app.relaunch = jest.fn().mockImplementation(() => {
     return testApplication.start()
   }
 });
-
-function getUserDataPath() {
-  const app = electron.app || electron.remote.app;
-  const userDataPath = app.getPath('userData');
-  return userDataPath;
-}
 
 function getDirContents(path: string) {
   return fs.readdirSync(path);
@@ -41,24 +38,24 @@ function createTmpDir() {
   return tmpDir;
 }
 
+const tmpUserDataDir = createTmpDir();
 let testApplication: Application;
 
 describe('electron-clear-data', () => {
-  jest.setTimeout(15000);
+  jest.setTimeout(25000);
 
-  const userDataDir = getUserDataPath();
-
-  beforeEach(() => {
-    const tmpDir = createTmpDir();
+  beforeEach(async () => {
     testApplication = new Application({
       path: electronPath,
       args: [testAppPath],
       env: {
         SPECTRON: true,
       },
-      chromeDriverArgs: [`user-data-dir=${tmpDir}`]
+      chromeDriverArgs: [`user-data-dir=${tmpUserDataDir}`]
     });
-    return testApplication.start();
+    return testApplication.start().then(() => {
+      app.setPath('userData', tmpUserDataDir);
+    });
   });
 
   afterEach(() => {
@@ -68,42 +65,67 @@ describe('electron-clear-data', () => {
   });
 
   test('user data directory should exist', () => {
-    const testDirExists = fs.existsSync(userDataDir);
+    const testDirExists = fs.existsSync(tmpUserDataDir);
     expect(testDirExists).toBe(true);
   });
 
-  describe('clearUserData()', () => {
+  describe('clearUserDataDirectory()', () => {
     it('should delete all files', () => {
-      let dirContents = getDirContents(userDataDir);
+      let dirContents = getDirContents(tmpUserDataDir);
       expect(dirContents.length).toBeGreaterThan(0);
-      
-      clearUserData();
 
-      dirContents = getDirContents(userDataDir);
+      clearUserDataDirectory();
+
+      dirContents = getDirContents(tmpUserDataDir);
       expect(dirContents.length).toBe(0);
     });
 
     it('should relaunch application', () => {
-      clearUserData();
+      clearUserDataDirectory();
 
       expect(app.exit).toBeCalledTimes(1);
       expect(app.relaunch).toBeCalledTimes(1);
     });
 
     it('should create new files after relaunch', async () => {
-      let dirContents = getDirContents(userDataDir);
+      let dirContents = getDirContents(tmpUserDataDir);
       expect(dirContents.length).toBeGreaterThan(0);
 
-      clearUserData();
+      clearUserDataDirectory();
 
-      dirContents = getDirContents(userDataDir);
+      dirContents = getDirContents(tmpUserDataDir);
       expect(dirContents.length).toBe(0);
 
       // Waiting a bit so Electron has a chance to create the user data directory.
-      await sleep(15);
+      await sleep(20);
 
-      dirContents = getDirContents(userDataDir);
+      dirContents = getDirContents(tmpUserDataDir);
       expect(dirContents.length).toBeGreaterThan(0);
+    });
+  });
+
+  describe('clearLevelDbDirectories', () => {
+    it('should clear leveldb directories', async () => {
+      clearLevelDbDirectories();
+
+      const leveldbDirectories = [
+        'Local Storage',
+        'IndexedDB',
+        'Session Storage'
+      ];
+
+      leveldbDirectories.forEach((item) => {
+        const dataDir = path.join(tmpUserDataDir, item);
+        const dirContents = fs.readdirSync(dataDir);
+        expect(dirContents.length).toBe(0);
+      });
+    });
+
+    it('should relaunch application', () => {
+      clearLevelDbDirectories();
+
+      expect(app.exit).toBeCalledTimes(1);
+      expect(app.relaunch).toBeCalledTimes(1);
     });
   });
 });
