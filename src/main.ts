@@ -38,8 +38,3 @@ export function clearLevelDbDirectories(): void {
   });
   relaunchApp();
 };
-
-export {
-  clearUserDataDirectory,
-  clearLevelDbDirectories
-};
