@@ -82,7 +82,7 @@ clearUserDataDirectory();
 
 ---
 
-* To delete [leveldb](##leveldb-files) files only, from the user data directory:
+* To delete sensitive LevelDB related files only (from the user data directory):
 
 ```javascript
 import { clearLevelDbDirectories } from 'electron-clear-data';
