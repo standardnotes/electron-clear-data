@@ -70,7 +70,7 @@ npm install electron-clear-data
 
 ## Usage
 
-* To delete the user data directory:
+* To delete the entire user data directory:
 
 ```javascript
 import { clearUserDataDirectory } from 'electron-clear-data';
