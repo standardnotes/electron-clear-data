@@ -22,7 +22,7 @@ Our main interests here are the [Log files](###log-files) and [Sorted tables](##
 
 In addition, even deleting records from IndexedDB does not remove those records from the log file. Please see [this open issue](https://github.com/google/leveldb/issues/783) on the leveldb repo for more.
 
-The only sure-fire way to clear sensitive data that was once written to localStorage or IndexedDB is to delete the underlying files manually, and restart the application so that these files are recreated, which is precisely what this package does.
+The only sure-fire way to clear sensitive data that was once written to localStorage or IndexedDB is to delete the underlying files manually, and restart the application so that these files are recreated. This is precisely what this package does.
 
 The core code involved in this package is not difficult to write yourself. However, it can be difficult to do safely, and to ascertain the correctness of your code. For this reason we've created this package to be as safe and reliable as possible. We've composed tests that ensure this functionality always works as you would expect and does not regress. The code is written in TypeScript to maximize compile-time safety. We'll also keep this package up to date with other Electron data-related vulnerabilities as and when they are discovered.
 
