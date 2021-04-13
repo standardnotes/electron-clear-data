@@ -1,0 +1,15 @@
+body {
+  background-color: white;
+}
+
+#root {
+  text-align: center;
+}
+
+.sn-logo {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  height: 41px;
+  width: 41px;
+}
