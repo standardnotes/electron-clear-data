@@ -1,0 +1,22 @@
+name: Test pull requests
+on:
+  pull_request:
+    branches: [ main, develop ]
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup NodeJS Environment
+        uses: actions/setup-node@v1
+        with:
+          node-version: '14.x'
+      - name: Install project dependencies
+        run: yarn install --pure-lockfile
+      - name: Compile files
+        run: yarn build
+      - name: Run code coverage report
+        run: yarn coverage
