@@ -2,3 +2,5 @@ src
 tsconfig.json
 jest.config.ts
 tmp
+test
+.github
