@@ -6,7 +6,6 @@ import {
   clearUserDataDirectory,
   clearSensitiveDirectories
 } from './main';
-import { assert } from 'node:console';
 
 const electronPath = path.resolve(__dirname, '../node_modules/.bin/electron');
 const testAppPath = path.resolve(__dirname, '../test/electron-app');
