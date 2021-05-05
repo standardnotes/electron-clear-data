@@ -1,10 +1,10 @@
-import { app } from 'electron';
+import { app, BrowserWindow } from 'electron';
 import { emptyDirSync } from 'fs-extra';
 import path from 'path';
 
-const relaunchApp = () => {
-  app.relaunch();
-  app.exit();
+const reloadApp = () => {
+  const focusedWindow = BrowserWindow.getFocusedWindow() ?? BrowserWindow.getAllWindows()[0];
+  focusedWindow.webContents.reload();
 };
 
 /**
@@ -14,7 +14,7 @@ const relaunchApp = () => {
 export function clearUserDataDirectory(): void {
   const userDataPath = app.getPath('userData');
   emptyDirSync(userDataPath);
-  relaunchApp();
+  reloadApp();
 };
 
 /**
@@ -36,5 +36,5 @@ export function clearSensitiveDirectories(): void {
     const removeDirectory = path.join(userDataPath, item);
     emptyDirSync(removeDirectory);
   });
-  relaunchApp();
+  reloadApp();
 };

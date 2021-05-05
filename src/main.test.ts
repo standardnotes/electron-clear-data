@@ -1,25 +1,15 @@
 import { Application } from 'spectron';
-import { app } from 'electron';
+import { app, BrowserWindow } from 'electron';
 import fs from 'fs';
 import path from 'path';
 import {
   clearUserDataDirectory,
   clearSensitiveDirectories
 } from './main';
+import { assert } from 'node:console';
 
 const electronPath = path.resolve(__dirname, '../node_modules/.bin/electron');
 const testAppPath = path.resolve(__dirname, '../test/electron-app');
-
-/**
- * app.exit() and app.relaunch() are mocked here because 
- * relaunching the application would disconnect the test session.
- */
-app.exit = jest.fn().mockImplementation(() => '');
-app.relaunch = jest.fn().mockImplementation(() => {
-  if (testApplication && !testApplication.isRunning()) {
-    return testApplication.start()
-  }
-});
 
 function getDirContents(path: string) {
   return fs.readdirSync(path);
@@ -80,14 +70,16 @@ describe('electron-clear-data', () => {
       expect(dirContents.length).toBe(0);
     });
 
-    it('should relaunch application', () => {
+    it('should reload application', () => {
+      const focusedWindow = BrowserWindow.getFocusedWindow() ?? BrowserWindow.getAllWindows()[0];
+      focusedWindow.webContents.reload = jest.fn().mockImplementation(() => '')
+
       clearUserDataDirectory();
 
-      expect(app.exit).toBeCalledTimes(1);
-      expect(app.relaunch).toBeCalledTimes(1);
+      expect(focusedWindow.webContents.reload).toBeCalledTimes(1);
     });
 
-    it('should create new files after relaunch', async () => {
+    it('should create new files after reload', async () => {
       let dirContents = getDirContents(tmpUserDataDir);
       expect(dirContents.length).toBeGreaterThan(0);
 
@@ -106,6 +98,7 @@ describe('electron-clear-data', () => {
 
   describe('clearSensitiveDirectories', () => {
     it('should clear leveldb directories', async () => {
+      expect.assertions(3);
       clearSensitiveDirectories();
 
       const leveldbDirectories = [
@@ -121,11 +114,13 @@ describe('electron-clear-data', () => {
       });
     });
 
-    it('should relaunch application', () => {
+    it('should reload application', () => {
+      const focusedWindow = BrowserWindow.getFocusedWindow() ?? BrowserWindow.getAllWindows()[0];
+      focusedWindow.webContents.reload = jest.fn().mockImplementation(() => '')
+
       clearSensitiveDirectories();
 
-      expect(app.exit).toBeCalledTimes(1);
-      expect(app.relaunch).toBeCalledTimes(1);
+      expect(focusedWindow.webContents.reload).toBeCalledTimes(1);
     });
   });
 });
