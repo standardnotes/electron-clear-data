@@ -1,9 +1,9 @@
 import { Application } from 'spectron';
-import { app } from 'electron';
+import { app, BrowserWindow } from 'electron';
 import fs from 'fs';
 import path from 'path';
 import {
-  clearUserDataDirectory,
+  clearAllUserData,
   clearSensitiveDirectories
 } from './main';
 
@@ -44,6 +44,8 @@ let testApplication: Application;
 describe('electron-clear-data', () => {
   jest.setTimeout(25000);
 
+  let clearStorageData: jest.SpyInstance<Promise<void>, [options?: Electron.ClearStorageDataOptions]>;
+
   beforeEach(async () => {
     testApplication = new Application({
       path: electronPath,
@@ -55,6 +57,8 @@ describe('electron-clear-data', () => {
     });
     return testApplication.start().then(() => {
       app.setPath('userData', tmpUserDataDir);
+      const focusedWindow = BrowserWindow.getFocusedWindow() ?? BrowserWindow.getAllWindows()[0];
+      clearStorageData = jest.spyOn(focusedWindow!.webContents.session, 'clearStorageData');
     });
   });
 
@@ -69,56 +73,40 @@ describe('electron-clear-data', () => {
     expect(testDirExists).toBe(true);
   });
 
-  describe('clearUserDataDirectory()', () => {
-    it('should delete all files', () => {
+  describe('clearAllUserData()', () => {
+    it('should clear all user data', () => {
+      clearAllUserData();
+
+      expect(clearStorageData).toBeCalledTimes(1);
+      expect(clearStorageData).toBeCalledWith();
+
       let dirContents = getDirContents(tmpUserDataDir);
       expect(dirContents.length).toBeGreaterThan(0);
-
-      clearUserDataDirectory();
-
-      dirContents = getDirContents(tmpUserDataDir);
-      expect(dirContents.length).toBe(0);
     });
 
     it('should relaunch application', () => {
-      clearUserDataDirectory();
+      clearAllUserData();
 
       expect(app.exit).toBeCalledTimes(1);
       expect(app.relaunch).toBeCalledTimes(1);
     });
-
-    it('should create new files after relaunch', async () => {
-      let dirContents = getDirContents(tmpUserDataDir);
-      expect(dirContents.length).toBeGreaterThan(0);
-
-      clearUserDataDirectory();
-
-      dirContents = getDirContents(tmpUserDataDir);
-      expect(dirContents.length).toBe(0);
-
-      // Waiting a bit so Electron has a chance to create the user data directory.
-      await sleep(20);
-
-      dirContents = getDirContents(tmpUserDataDir);
-      expect(dirContents.length).toBeGreaterThan(0);
-    });
   });
 
   describe('clearSensitiveDirectories', () => {
-    it('should clear leveldb directories', async () => {
+    it('should clear sensitive leveldb directories', async () => {
       clearSensitiveDirectories();
 
-      const leveldbDirectories = [
-        'Local Storage',
-        'IndexedDB',
-        'Session Storage'
-      ];
-
-      leveldbDirectories.forEach((item) => {
-        const dataDir = path.join(tmpUserDataDir, item);
-        const dirContents = fs.readdirSync(dataDir);
-        expect(dirContents.length).toBe(0);
+      expect(clearStorageData).toBeCalledTimes(1);
+      expect(clearStorageData).toBeCalledWith({
+        storages: [
+          'indexdb',
+          'localstorage',
+          'websql'
+        ]
       });
+
+      let dirContents = getDirContents(tmpUserDataDir);
+      expect(dirContents.length).toBeGreaterThan(0);
     });
 
     it('should relaunch application', () => {
