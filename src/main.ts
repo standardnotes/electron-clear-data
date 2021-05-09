@@ -1,7 +1,18 @@
 import { app, BrowserWindow } from 'electron';
 
 const relaunchApp = () => {
-  app.relaunch();
+  const relaunchOptions = {
+    execPath: process.execPath,
+    args: process.argv
+  };
+  /**
+   * Fix for AppImage on Linux.
+   */
+  if (process.env.APPIMAGE) {
+    relaunchOptions.execPath = process.env.APPIMAGE;
+    relaunchOptions.args.unshift('--appimage-extract-and-run');
+  }
+  app.relaunch(relaunchOptions);
   app.exit();
 };
 
