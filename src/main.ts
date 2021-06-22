@@ -1,6 +1,6 @@
 import { app, BrowserWindow } from 'electron';
 
-const relaunchApp = () => {
+export const relaunchApp = () => {
   const relaunchOptions = {
     execPath: process.execPath,
     args: process.argv
