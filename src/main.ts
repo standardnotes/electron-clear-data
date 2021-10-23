@@ -35,7 +35,7 @@ export function clearAllUserData(): void {
  * Removes directories containing leveldb databases.
  * Each directory is reinitialized after re-launching the application.
  */
-export function clearSensitiveDirectories(): void {
+export function clearSensitiveDirectories(restart = true): void {
   const { webContents } = getFocusedWindow();
   webContents.session.flushStorageData();
   webContents.session.clearStorageData({
@@ -45,5 +45,7 @@ export function clearSensitiveDirectories(): void {
       'websql'
     ]
   });
-  relaunchApp();
+  if (restart) {
+    relaunchApp();
+  }
 };
