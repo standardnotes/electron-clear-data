@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/electron-clear-data",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Securely clears user data for your Electron application.",
   "homepage": "https://github.com/standardnotes/electron-clear-data#readme",
   "repository": {
